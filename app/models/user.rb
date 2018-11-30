@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-    audited
+    
     has_secure_password
     after_initialize :default_values
 

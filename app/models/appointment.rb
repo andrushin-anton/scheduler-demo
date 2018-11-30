@@ -1,5 +1,5 @@
 class Appointment < ApplicationRecord    
-    audited
+    
     validates :address, presence: true
     validates :customer_id, presence: true, :unless => :is_new_customer?
     validates :new_customer_first_name, presence: true, :if => :is_new_customer?

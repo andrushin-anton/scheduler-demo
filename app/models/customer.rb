@@ -1,5 +1,5 @@
 class Customer < ApplicationRecord
-    audited
+    
     after_initialize :default_values
     validates :first_name, presence: true
     validates :last_name, presence: true
