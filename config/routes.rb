@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   get 'sellerschedule/:id/date/:date', to: 'seller_schedule#show', as: 'sellerscheduledate'
   post 'sellerscheduleupdate', to: 'seller_schedule#update', as: 'sellerscheduleupdate'
 
+  get 'appointments/find', to: 'appointments#search'
+
   resources :appointments
   resources :administrators
   resources :managers
@@ -29,7 +31,8 @@ Rails.application.routes.draw do
   get 'appointments/new/:unixtime', to: 'appointments#new'
   get 'appointments/date/:date', to: 'appointments#index'
   get 'customers/find/:phone', to: 'customers#find_by_phone'
-  get 'bookings/available/:date', to: 'appointments#bookings'
+  get 'bookings/available/:appointment/:date', to: 'appointments#bookings'
+  get 'installers/available/:appointment/:date', to: 'installers#available'
   get 'appointments/:id/archive', to: 'appointments#archive'
   get 'appointments/:id/delete', to: 'appointments#delete'
   patch 'users/update_password/:id', to: 'users#update_password', as: 'update_password'
