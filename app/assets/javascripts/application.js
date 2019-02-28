@@ -68,11 +68,18 @@ $(document).on('turbolinks:load', function() {
     $('.datepicker').change(function() {
         var date = new Date($(this).val());
         var corrected_date = date.getFullYear() + '-' + (parseInt(date.getMonth()) + 1) + '-' + date.getDate();
+        var appointment_id = $('#appointment_id').val();
         $("#corrected_date").val(corrected_date);
 
-        find_booking_available(corrected_date).done(function(data) {
+        find_booking_available(appointment_id, corrected_date).done(function(data) {
             $('#time-frame-select').html(data);
         });
+
+        if ($('#appointment_status').val() == 'Sold') {
+            find_installers_available(appointment_id, corrected_date).done(function(data) {
+                $('#installers-select').html(data);
+            });
+        }
     });
 
     $('.grills-select').change(function() {
@@ -82,16 +89,6 @@ $(document).on('turbolinks:load', function() {
         } else {
             $('.grills-type-div').show();
             $('.grills-type-select').show();
-        }
-    });
-
-    $('.privacy-glass-select').change(function() {
-        if ($(this).val() == 'NO') {
-            $('.privacy-glass-type-div').hide();
-            $('.privacy-glass-type-select').hide();
-        } else {
-            $('.privacy-glass-type-div').show();
-            $('.privacy-glass-type-select').show();
         }
     });
 
@@ -108,6 +105,7 @@ $(document).on('turbolinks:load', function() {
         var attachments_count = parseInt($('#sold-attachments-count').val());
         attachments_count = attachments_count + 1;
         $('#sold-attachments-count').val(attachments_count);
+        process_attachments();
     });
 
     $('#s3_uploader').bind('s3_upload_failed', function(e, content) {
@@ -116,9 +114,16 @@ $(document).on('turbolinks:load', function() {
 });
 
 
-function find_booking_available(date) {
+function find_booking_available(appointment_id, date) {
     return $.ajax({
-        url: '/bookings/available/' + date,
+        url: '/bookings/available/' + appointment_id + '/' + date,
+        type: 'GET'
+    });
+}
+
+function find_installers_available(appointment_id, date) {
+    return $.ajax({
+        url: '/installers/available/' + appointment_id + '/' + date,
         type: 'GET'
     });
 }
@@ -182,16 +187,7 @@ function processEndTime(value) {
 
 function process_attachments() {
     var attachments_count = parseInt($('#sold-attachments-count').val());
-    var minimum_files = 2;
-
-    // if GRILLS - YES then minimum_files = 3
-    if ($('.grills-select').val() == 'YES') {
-        $('#required-label').html('Contract pdf or jpg, Deposit pdf or jpg, Grills type (required)');
-        minimum_files = 3;
-    } else {
-        $('#required-label').html('Contract pdf or jpg, Deposit pdf or jpg (required)');
-        minimum_files = 2;
-    }
+    var minimum_files = 1;
 
     if (attachments_count >= minimum_files) {
         $('#submit-sold').attr('disabled', false);
