@@ -47,6 +47,14 @@ class InstallersController < ApplicationController
     end
   end
 
+  def available
+    today = Date.parse(params[:date])
+    @appointment = Appointment.find(params[:appointment])
+    @installers = User.where(:status => 'ACTIVE', :role => 'installer', :id => InstallerSchedule.installer_ids_by_date_range(today, (today + 1.day)))
+
+    render layout: false, status: 200
+  end
+
   def destroy
     authorize! :installers_destroy, @installer
   end

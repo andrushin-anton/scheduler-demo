@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Demo App</title>
+    <title>Northern Windows & Doors</title>
     <%= csrf_meta_tags %>
 
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
@@ -16,7 +16,7 @@
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="<%= root_path %>" class="site_title"> <span>Demo App</span></a>
+              <a href="<%= root_path %>" class="site_title"> <span>Northern Windows & Doors</span></a>
             </div>
 
             <div class="clearfix"></div>
@@ -45,7 +45,7 @@
                       <li class="<%= 'current-page' if params[:controller] == 'customers' %>"><a href="<%= customers_path %>">Customers</a></li>
                     <% end %>
                     <% if can? :sellers, User %>
-                      <li class="<%= 'current-page' if params[:controller] == 'sellers' || params[:controller] == 'seller_schedule' %>"><a href="<%= sellers_path%>">Project Managers</a></li>
+                      <li class="<%= 'current-page' if params[:controller] == 'sellers' || params[:controller] == 'seller_schedule' %>"><a href="<%= sellers_path%>">Salesmen</a></li>
                     <% end %>
                     <% if can? :installers, User %>
                       <li class="<%= 'current-page' if params[:controller] == 'installers' || params[:controller] == 'installer_schedule' %>"><a href="<%= installers_path%>">Installers</a></li>
@@ -95,9 +95,9 @@
             <% flash.each do |name, msg| %>
             <div class="flash_message">Message: <%= msg%></div>
             <% end %>
-              <!-- <div class="nav toggle">
-                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
-              </div> -->
+              <!--<div class="nav toggle">-->
+                <!--<a id="menu_toggle"><i class="fa fa-bars"></i></a>-->
+              <!--</div>-->
 
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
@@ -106,6 +106,30 @@
                     <span class=" fa fa-angle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
+                    <% if can? :index, Appointment %>
+                        <li><a href="<%= appointments_path %>">Appointments</a></li>
+                    <% end %>
+                    <% if can? :index, Customer %>
+                        <li><a href="<%= customers_path %>">Customers</a></li>
+                    <% end %>
+                    <% if can? :sellers, User %>
+                        <li><a href="<%= sellers_path%>">Salesmen</a></li>
+                    <% end %>
+                    <% if can? :installers, User %>
+                        <li><a href="<%= installers_path%>">Installers</a></li>
+                    <% end %>
+                    <% if can? :telemarketers, User %>
+                        <li><a href="<%= telemarketers_path%>">Telemarketers</a></li>
+                    <% end %>
+                    <% if can? :managers, User %>
+                        <li><a href="<%= managers_path%>">Managers</a></li>
+                    <% end %>
+                    <% if can? :administrators, User %>
+                        <li><a href="<%= administrators_path%>">Administrators</a></li>
+                    <% end %>
+                    <% if can? :index, Logs %>
+                        <li><a href="<%= logs_path%>">Logs</a></li>
+                    <% end %>
                     <li><a href="<%= password_path(current_user) %>"> Change password</a></li>
                     <li><a href="<%= logout_path %>"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
                   </ul>

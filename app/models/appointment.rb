@@ -10,7 +10,7 @@ class Appointment < ApplicationRecord
     belongs_to :customer
     has_many :attachments
 
-    enum statuses: { Assigned: :Assigned, Lead: :Lead, Reschedule: :Reschedule, UpSell: :UpSell, Referral: :Referral, Cancelled: :Cancelled, Sold: :Sold, FollowUp: :FollowUp, Telemarketing: :Telemarketing }
+    enum statuses: { Assigned: :Assigned, Lead: :Lead, Reschedule: :Reschedule, UpSell: :UpSell, Referral: :Referral, Cancelled: :Cancelled, Sold: :Sold, FollowUp: :FollowUp, Telemarketing: :Telemarketing, Completed: :Completed }
     enum types: { Confirmed: :Confirmed, Unconfirmed: :Unconfirmed }
 
     attr_accessor :new_customer_first_name, :new_customer_last_name, :new_customer_phone, :new_customer_home_phone, :new_customer_email
@@ -28,6 +28,27 @@ class Appointment < ApplicationRecord
             self.status = 'Assigned' if val != ''
         end
         write_attribute(:seller_id, val.to_i)
+    end
+
+    def self.user_search(user, search)
+        if search
+            if user.role == 'admin' || user.role == 'manager' || user.role == 'master'
+                self.joins(:customer).where(
+                    '(address LIKE ? OR city LIKE ? OR customers.first_name LIKE ? OR customers.last_name LIKE ? OR comments LIKE ?)',
+                    "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%"
+                ).order('id DESC').all
+            elsif user.role == 'seller'
+                self.joins(:customer).where(
+                    '(address LIKE ? OR city LIKE ? OR customers.first_name LIKE ? OR customers.last_name LIKE ? OR comments LIKE ?) AND seller_id = ?',
+                    "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", user.id
+                ).order('id DESC').all
+            elsif user.role == 'installer'
+                self.joins(:customer).where(
+                    '(address LIKE ? OR city LIKE ? OR customers.first_name LIKE ? OR customers.last_name LIKE ? OR comments LIKE ?) AND installer_id = ?',
+                    "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%", user.id
+                ).order('id DESC').all
+            end
+        end
     end
     
 
@@ -205,30 +226,32 @@ class Appointment < ApplicationRecord
     def color
         
         case self.status.to_sym
-        
-        when :Lead
-            return '#583030'
-        when :Assigned
-            return '#FF902F'
-        when :Confirmed
-            return '#FF902F'
-        when :Telemarketing
-            return '#3A29D2'
-        when :Reschedule
-            return '#3A29D2'
-        when :UpSell
-            return '#d28f3e'
-        when :Referral
-            return '#d28f3e'
-        when :Cancelled
-            return '#EC2D26'
-        when :Sold
-            return '#4DB02F'
-        when :FollowUp
-            return '#B326C9'
-        else
-            return '#FFF'
-        end
+
+            when :Completed
+                return 'pink'
+            when :Lead
+                return 'gray'
+            when :Assigned
+                return 'orange'
+            when :Confirmed
+                return 'dark-blue'
+            when :Telemarketing
+                return '#333'
+            when :Reschedule
+                return '#00008B'
+            when :UpSell
+                return 'black'
+            when :Referral
+                return 'blue'
+            when :Cancelled
+                return 'red'
+            when :Sold
+                return self.installer_id == nil ? 'green' : 'green'
+            when :FollowUp
+                return 'purple'
+            else
+                return '#FFF'
+            end
     end
 
 

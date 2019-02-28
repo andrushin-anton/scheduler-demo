@@ -27,7 +27,7 @@ class AppointmentsController < ApplicationController
     else 
       start_time = Time.parse(today.at_beginning_of_week.to_s)
     end
-  
+
     end_time = Time.parse((today.at_end_of_week + 1.day).to_s)
     
     # get appointments
@@ -46,11 +46,21 @@ class AppointmentsController < ApplicationController
     end
   end
 
+  def search
+    # get appointments
+    @appointments = Appointment.user_search(current_user, params[:search])
+  end
+
   def bookings
     today = Date.parse(params[:date])
+    appointment = Appointment.find(params[:appointment])
 
-    @bookings = SellerSchedule.bookings_available(today, (today + 1.day))
-    render layout: false, status: 200 
+    if appointment.status == 'Sold'
+      @bookings = InstallerSchedule.bookings_available(today, (today + 1.day))
+    else
+      @bookings = SellerSchedule.bookings_available(today, (today + 1.day))
+    end
+    render layout: false, status: 200
   end
   
 
@@ -142,6 +152,12 @@ class AppointmentsController < ApplicationController
   def update
     authorize! :update, @appointment
 
+    if current_user.role == 'installer'
+      if params['installer_marks_as_completed']
+        @appointment.status = 'Completed'
+      end
+    end
+
     if current_user.role == 'seller'
       @appointment.sold_by = current_user.first_name + ' ' + current_user.last_name + ', ' + DateTime.now.to_formatted_s(:db) if params[:appointment][:status] == 'Sold'
     end    
@@ -221,11 +237,17 @@ class AppointmentsController < ApplicationController
       @appointment.new_customer_last_name = @customer.last_name
       @appointment.new_customer_email = @customer.email
 
-      @bookings = SellerSchedule.bookings_available(Date.parse(@appointment.schedule_time.to_s), Date.parse((@appointment.schedule_time + 1.day).to_s), @appointment)
-    end   
+      if @appointment.status == 'Sold'
+        # Bookings by installer
+        @bookings = InstallerSchedule.bookings_available(Date.parse(@appointment.schedule_time.to_s), Date.parse((@appointment.schedule_time + 1.day).to_s), @appointment)
+      else
+        # Bookings by salesmen
+        @bookings = SellerSchedule.bookings_available(Date.parse(@appointment.schedule_time.to_s), Date.parse((@appointment.schedule_time + 1.day).to_s), @appointment)
+      end
+    end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def appointment_params
-      params.require(:appointment).permit(:sold_window_color_inside, :sold_window_color_outside, :sold_measure_window, :sold_privacy_glass, :sold_privacy_glass_type, :sold_grills, :sold_grills_type, :sold_number_of_sealed_units, :sold_number_of_entry_doors, :sold_number_of_patio_doors, :sold_number_of_windows, :sold_window_series, :sold_window_series, :sold_delivery_dead_line, :sold_amount_of_total, :sold_discount, :sold_extra, :sold_due_on_delivery, :sold_total, :sold_credit_card, :sold_gst, :sold_energy_charge, :sold_amount, :sold_snap, :reschedule_reason, :reschedule_time, :followup_timeframe, :followup_comments, :cancel_reason, :booking_by, :app_type, :sealed, :followup_time, :new_customer_first_name, :new_customer_last_name, :new_customer_phone, :new_customer_home_phone, :new_customer_email, :status, :is_new_customer, :schedule_time, :end_time, :comments, :seller_id, :customer_id, :address, :city, :province, :postal_code, :windows_num, :doors_num, :how_soon, :quotes_num, :hear_about_us, :homeoweners_at_home, :supply_install, :financing, :installer_id)
+      params.require(:appointment).permit(:sold_window_color_inside, :sold_window_color_outside, :sold_measure_window, :sold_privacy_glass, :sold_privacy_glass_type, :sold_grills, :sold_grills_type, :sold_number_of_sealed_units, :sold_number_of_entry_doors, :sold_number_of_patio_doors, :sold_number_of_windows, :sold_window_series, :sold_window_series, :sold_delivery_dead_line, :sold_amount_of_total, :sold_discount, :sold_extra, :sold_due_on_delivery, :sold_total, :sold_credit_card, :sold_gst, :sold_energy_charge, :sold_amount, :sold_snap, :reschedule_reason, :reschedule_time, :followup_timeframe, :followup_comments, :cancel_reason, :booking_by, :app_type, :sealed, :followup_time, :new_customer_first_name, :new_customer_last_name, :new_customer_phone, :new_customer_home_phone, :new_customer_email, :status, :is_new_customer, :schedule_time, :end_time, :comments, :seller_id, :customer_id, :address, :city, :province, :postal_code, :windows_num, :doors_num, :how_soon, :quotes_num, :hear_about_us, :homeoweners_at_home, :supply_install, :financing, :installer_id, :payment_type)
     end
 end

@@ -12,6 +12,8 @@
       <% end %>
 
       <%= f.hidden_field :customer_id, value: appointment.customer_id, id: :customer_id %>
+      <%= f.hidden_field :appointment_id, value: appointment.id, id: :appointment_id %>
+      <%= f.hidden_field :appointment_status, value: appointment.status, id: :appointment_status %>
 
       <div class="form-group">
           <label class="control-label col-md-3 col-sm-3 col-xs-12">Schedule Date</label>
@@ -89,7 +91,7 @@
           <% if current_user.role == 'telemarketer' %>
             <%= f.select :status, options_for_select({Telemarketing: :Telemarketing }.values, :Telemarketing), {}, { class: 'form-control' } %>
           <% else %>
-            <%= f.select :status, options_for_select({Lead: :Lead, Reschedule: :Reschedule, UpSell: :UpSell, Referral: :Referral, Telemarketing: :Telemarketing, Assigned: :Assigned, Cancelled: :Cancelled, Sold: :Sold, FollowUp: :FollowUp }.values, default_type), {}, { class: 'form-control' } %>
+            <%= f.select :status, options_for_select({Lead: :Lead, Reschedule: :Reschedule, UpSell: :UpSell, Referral: :Referral, Telemarketing: :Telemarketing, Assigned: :Assigned, Cancelled: :Cancelled, Sold: :Sold, FollowUp: :FollowUp, Completed: :Completed }.values, default_type), {}, { class: 'form-control' } %>
           <% end %>
           </div>
       </div>
@@ -97,18 +99,18 @@
       
       <% if current_user.role == 'admin' || current_user.role == 'master' %>
       <div class="form-group">
-          <label class="control-label col-md-3 col-sm-3 col-xs-12">Project Manager</label>
+          <label class="control-label col-md-3 col-sm-3 col-xs-12">Salesman</label>
           <div class="col-md-9 col-sm-9 col-xs-12">
-            <%= f.select :seller_id, options_for_select(sellers.map{ |c| [c.full_name, c.id] }, appointment.seller_id), {:include_blank => 'None Specified'}, { class: 'form-control' } %>
+            <%= f.select :seller_id, options_for_select(sellers.map{ |c| [c.full_name, c.id] }, appointment.seller_id), {:include_blank => 'None Specified'}, { class: 'form-control', disabled: appointment.status == 'Sold' } %>
           </div>
       </div>
       <% end %>
 
         <% if edit_mode %>
-          <% if current_user.role == 'admin' || current_user.role == 'master' || current_user.role == 'manager' %>
+          <% if ((current_user.role == 'admin' || current_user.role == 'master' || current_user.role == 'manager') && appointment.status == 'Sold') %>
               <div class="form-group">
                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Installer</label>
-                <div class="col-md-9 col-sm-9 col-xs-12">
+                <div class="col-md-9 col-sm-9 col-xs-12" id="installers-select">
                   <%= f.select :installer_id, options_for_select(@installers.map{ |c| [c.full_name, c.id] }, appointment.installer_id), {:include_blank => 'None Specified'}, { class: 'form-control' } %>
                 </div>
               </div>
@@ -242,7 +244,7 @@
       <div class="form-group">
           <label class="control-label col-md-3 col-sm-3 col-xs-12">How did you hear about us</label>
           <div class="col-md-9 col-sm-9 col-xs-12">
-            <%= f.select :hear_about_us, { "Flyer" => "Flyer", "Google" => "Google", "Internet other" => "Internet other", "Telemarketing" => "Telemarketing", "Radio" => "Radio", "Refferal" => "Refferal", "World of month" => "World of month", "Neighboor" => "Neighboor", "Relative" => "Relative", "Other" => "Other" }, {}, {:class => 'form-control'} %>
+            <%= f.select :hear_about_us, { "Flyer" => "Flyer", "Money saver" => "Money saver", "Finest" => "Finest", "Sigh" => "Sigh", "Home stars" => "Home stars", "BBB" => "BBB", "Google" => "Google", "Internet other" => "Internet other", "Telemarketing" => "Telemarketing", "Radio" => "Radio", "Refferal" => "Refferal", "World of month" => "World of month", "Neighboor" => "Neighboor", "Relative" => "Relative", "Other" => "Other" }, {}, {:class => 'form-control'} %>
           </div>
       </div>
      
@@ -338,7 +340,7 @@
       </div>
 
       <div class="form-group">
-        <label class="control-label col-md-3 col-sm-3 col-xs-12">Energy Surcharge</label>
+        <label class="control-label col-md-3 col-sm-3 col-xs-12">Down payment</label>
         <div class="col-md-9 col-sm-9 col-xs-12">
           <%= f.number_field :sold_energy_charge, :class => 'form-control money', :step => "0.01" %>
         </div>
@@ -352,13 +354,6 @@
       </div>
 
       <div class="form-group">
-        <label class="control-label col-md-3 col-sm-3 col-xs-12">Credit Card Charge</label>
-        <div class="col-md-9 col-sm-9 col-xs-12">
-          <%= f.number_field :sold_credit_card, :class => 'form-control money', :step => "0.01" %>
-        </div>
-      </div>
-
-      <div class="form-group">
         <label class="control-label col-md-3 col-sm-3 col-xs-12">Total</label>
         <div class="col-md-9 col-sm-9 col-xs-12">
           <%= f.number_field :sold_total, :class => 'form-control money', :step => "0.01", required: 'true' %>
@@ -366,51 +361,16 @@
       </div>
 
       <div class="form-group">
-        <label class="control-label col-md-3 col-sm-3 col-xs-12">Due on delivery</label>
-        <div class="col-md-9 col-sm-9 col-xs-12">
-          <% if appointment.sold_due_on_delivery.nil? || appointment.sold_due_on_delivery == '' %>
-          <%= f.hidden_field :sold_due_on_delivery, value: Date.today.to_formatted_s(:db), id: 'delivery_corrected_date' %>
-          <input type="text" class="form-control has-feedback-left datepicker-delivery" value="<%= Date.today.strftime("%m/%d/%Y") %>" required />
-          <% else %>
-          <%= f.hidden_field :sold_due_on_delivery, value: appointment.sold_due_on_delivery.to_formatted_s(:db), id: 'delivery_corrected_date' %>
-          <input type="text" class="form-control has-feedback-left datepicker-delivery" value="<%= appointment.sold_due_on_delivery.strftime("%m/%d/%Y") %>" required />
-          <% end %>
-          <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label col-md-3 col-sm-3 col-xs-12">Extra</label>
-        <div class="col-md-9 col-sm-9 col-xs-12">
-          <%= f.number_field :sold_extra, :class => 'form-control money', :step => "0.01" %>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label col-md-3 col-sm-3 col-xs-12">Discount</label>
-        <div class="col-md-9 col-sm-9 col-xs-12">
-          <%= f.number_field :sold_discount, :class => 'form-control money', :step => "0.01" %>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="control-label col-md-3 col-sm-3 col-xs-12">Amount of total order on completion</label>
+        <label class="control-label col-md-3 col-sm-3 col-xs-12">Amount due upon installation</label>
         <div class="col-md-9 col-sm-9 col-xs-12">
           <%= f.number_field :sold_amount_of_total, :class => 'form-control money', :step => "0.01" %>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="control-label col-md-3 col-sm-3 col-xs-12">Delivery Dead Line</label>
+        <label class="control-label col-md-3 col-sm-3 col-xs-12">Payment Type</label>
         <div class="col-md-9 col-sm-9 col-xs-12">
-          <% if appointment.sold_delivery_dead_line.nil? || appointment.sold_delivery_dead_line == '' %>
-          <%= f.hidden_field :sold_delivery_dead_line, value: Date.today.to_formatted_s(:db), id: 'delivery_dead_line_corrected_date' %>
-          <input type="text" class="form-control has-feedback-left datepicker-delivery-dead-line" value="<%= Date.today.strftime("%m/%d/%Y") %>" required />
-          <% else %>
-          <%= f.hidden_field :sold_delivery_dead_line, value: appointment.sold_delivery_dead_line.to_formatted_s(:db), id: 'delivery_dead_line_corrected_date' %>
-          <input type="text" class="form-control has-feedback-left datepicker-delivery-dead-line" value="<%= appointment.sold_delivery_dead_line.strftime("%m/%d/%Y") %>" required />
-          <% end %>
-          <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
+          <%= f.select :payment_type, options_for_select({ 'Cheque' => 'Cheque', 'Credit Card' => 'Credit Card' }.values, @appointment.payment_type), {}, { class: 'form-control' } %>
         </div>
       </div>
 
@@ -467,13 +427,6 @@
         <label class="control-label col-md-3 col-sm-3 col-xs-12">Privacy glass</label>
         <div class="col-md-9 col-sm-9 col-xs-12">
           <%= f.select :sold_privacy_glass, options_for_select({ YES: :YES, NO: :NO }.values, appointment.sold_privacy_glass), {}, { class: 'form-control privacy-glass-select' } %>
-        </div>
-      </div>
-
-      <div class="form-group privacy-glass-type-div">
-        <label class="control-label col-md-3 col-sm-3 col-xs-12">Privacy glass type</label>
-        <div class="col-md-9 col-sm-9 col-xs-12">
-          <%= f.select :sold_privacy_glass_type, options_for_select({ 'MISSING INFO' => 'MISSING INFO' }.values, appointment.sold_privacy_glass_type), {}, { class: 'form-control privacy-glass-type-select' } %>
         </div>
       </div>
 

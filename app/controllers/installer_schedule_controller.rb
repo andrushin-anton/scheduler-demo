@@ -39,7 +39,8 @@ class InstallerScheduleController < ApplicationController
 
     respond_to do |format|
 
-      InstallerSchedule.remove_existing(@installer.id, params[:start_time], params[:end_time])
+      end_time = params[:end_time] + ' 23:59:59'
+      InstallerSchedule.remove_existing(@installer.id, params[:start_time], end_time)
       
       if params[:schedule_time]
         params[:schedule_time].each do |day|

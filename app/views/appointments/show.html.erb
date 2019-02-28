@@ -173,9 +173,19 @@
         </div>
         <div class="ln_solid"></div>
         <div class="form-group">
-          <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
-            <%= f.submit 'Save Comments!', :class => 'btn btn-success' %>
-          </div>
+          <% if current_user.role == 'installer' %>
+              <div class="col-md-3 mb-2">
+                <%= f.submit 'Save Comments!', :class => 'btn btn-primary' %>
+              </div>
+              <div class="col-md-3 mb-2">
+                <%= f.submit 'Save Comments & Mark as Completed!', :name => 'installer_marks_as_completed', :class => 'btn btn-success' %>
+              </div>
+              <% else %>
+               <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
+                <%= f.submit 'Save Comments!', :name => 'comments', :class => 'btn btn-primary' %>
+              </div>
+              <% end %>
+
         </div>
         <% end %>
 
@@ -299,7 +309,7 @@
                           <%= f.hidden_field :status, value: Appointment.statuses[:Sold] %>
 
                           <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">SNAP Financing</label>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Financing</label>
                             <div class="col-md-9 col-sm-9 col-xs-12">
                               <%= f.select :sold_snap, options_for_select({ YES: :YES, NO: :NO }.values, @appointment.sold_snap), {}, { class: 'form-control' } %>
                             </div>
@@ -313,7 +323,7 @@
                           </div>
 
                           <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Energy Surcharge</label>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Down payment</label>
                             <div class="col-md-9 col-sm-9 col-xs-12">
                               <%= f.number_field :sold_energy_charge, :class => 'form-control money', :step => "0.01" %>
                             </div>
@@ -327,13 +337,6 @@
                           </div>
 
                           <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Credit Card Charge</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                              <%= f.number_field :sold_credit_card, :class => 'form-control money', :step => "0.01" %>
-                            </div>
-                          </div>
-
-                          <div class="form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Total</label>
                             <div class="col-md-9 col-sm-9 col-xs-12">
                               <%= f.number_field :sold_total, :class => 'form-control money', :step => "0.01", required: 'true' %>
@@ -341,51 +344,16 @@
                           </div>
 
                           <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Due on delivery</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                              <% if @appointment.sold_due_on_delivery.nil? || @appointment.sold_due_on_delivery == '' %>
-                              <%= f.hidden_field :sold_due_on_delivery, value: Date.today.to_formatted_s(:db), id: 'delivery_corrected_date' %>
-                              <input type="text" class="form-control has-feedback-left datepicker-delivery" value="<%= Date.today.strftime("%m/%d/%Y") %>" required />
-                              <% else %>
-                              <%= f.hidden_field :sold_due_on_delivery, value: @appointment.sold_due_on_delivery.to_formatted_s(:db), id: 'delivery_corrected_date' %>
-                              <input type="text" class="form-control has-feedback-left datepicker-delivery" value="<%= @appointment.sold_due_on_delivery.strftime("%m/%d/%Y") %>" required />
-                              <% end %>
-                              <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
-                            </div>
-                          </div>
-
-                          <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Extra</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                              <%= f.number_field :sold_extra, :class => 'form-control money', :step => "0.01" %>
-                            </div>
-                          </div>
-
-                          <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Discount</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                              <%= f.number_field :sold_discount, :class => 'form-control money', :step => "0.01" %>
-                            </div>
-                          </div>
-
-                          <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Amount of total order on completion</label>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Amount due upon installation</label>
                             <div class="col-md-9 col-sm-9 col-xs-12">
                               <%= f.number_field :sold_amount_of_total, :class => 'form-control money', :step => "0.01" %>
                             </div>
                           </div>
 
                           <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Delivery Dead Line</label>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Payment Type</label>
                             <div class="col-md-9 col-sm-9 col-xs-12">
-                              <% if @appointment.sold_delivery_dead_line.nil? || @appointment.sold_delivery_dead_line == '' %>
-                              <%= f.hidden_field :sold_delivery_dead_line, value: Date.today.to_formatted_s(:db), id: 'delivery_dead_line_corrected_date' %>
-                              <input type="text" class="form-control has-feedback-left datepicker-delivery-dead-line" value="<%= Date.today.strftime("%m/%d/%Y") %>" required />
-                              <% else %>
-                              <%= f.hidden_field :sold_delivery_dead_line, value: @appointment.sold_delivery_dead_line.to_formatted_s(:db), id: 'delivery_dead_line_corrected_date' %>
-                              <input type="text" class="form-control has-feedback-left datepicker-delivery-dead-line" value="<%= @appointment.sold_delivery_dead_line.strftime("%m/%d/%Y") %>" required />
-                              <% end %>
-                              <span class="fa fa-calendar-o form-control-feedback left" aria-hidden="true"></span>
+                              <%= f.select :payment_type, options_for_select({ 'Cheque' => 'Cheque', 'Credit Card' => 'Credit Card' }.values, @appointment.payment_type), {}, { class: 'form-control' } %>
                             </div>
                           </div>
 
@@ -431,31 +399,10 @@
                             </div>
                           </div>
 
-                          <div class="form-group grills-type-div">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">GRILLS TYPE</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                              <%= f.select :sold_grills_type, options_for_select({ 'Separate file' => 'Separate file', 'NO' => 'NO' }.values, @appointment.sold_grills_type), {}, { class: 'form-control grills-type-select' } %>
-                            </div>
-                          </div>
-
                           <div class="form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Privacy glass</label>
                             <div class="col-md-9 col-sm-9 col-xs-12">
                               <%= f.select :sold_privacy_glass, options_for_select({ YES: :YES, NO: :NO }.values, @appointment.sold_privacy_glass), {}, { class: 'form-control privacy-glass-select' } %>
-                            </div>
-                          </div>
-
-                          <div class="form-group privacy-glass-type-div">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Privacy glass type</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                              <%= f.select :sold_privacy_glass_type, options_for_select({ 'MISSING INFO' => 'MISSING INFO' }.values, @appointment.sold_privacy_glass_type), {}, { class: 'form-control privacy-glass-type-select' } %>
-                            </div>
-                          </div>
-
-                          <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Measure Window</label>
-                            <div class="col-md-9 col-sm-9 col-xs-12">
-                              <%= f.select :sold_measure_window, options_for_select({ 'Brick to Brick' => 'Brick to Brick', 'Stud to Stud' => 'Stud to Stud', 'Straight Through' => 'Straight Through', 'Retro Fit' => 'Retro Fit', 'Custom' => 'Custom' }.values, @appointment.sold_measure_window), {}, { class: 'form-control' } %>
                             </div>
                           </div>
 
@@ -479,7 +426,7 @@
                           <div class="form-group">
                             <div class="col-md-9 col-sm-9 col-xs-12 col-md-offset-3">
                               <button class="btn btn-primary" type="reset">Reset</button>
-                              <%= f.submit 'Save as Sold', :class => 'btn btn-success', id: 'submit-sold', disabled: true %>
+                              <%= f.submit 'Save as Sold', :class => 'btn btn-success', id: 'submit-sold', disabled: false %>
                             </div>
                           </div>
                         <% end %>    

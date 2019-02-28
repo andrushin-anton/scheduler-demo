@@ -1,0 +1,6 @@
+<select class="form-control" name="appointment[installer_id]" id="appointment_installer_id">
+  <option value="">None Specified</option>
+  <% @installers.each do |installer| %>
+      <option value="<%= installer.id %>"><%= installer.full_name %></option>
+  <% end %>
+</select>

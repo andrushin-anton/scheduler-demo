@@ -28,7 +28,7 @@
           
               <div class="col-md-2 col-sm-9 col-xs-1">
                 <select class="form-control" onchange="this.options[this.selectedIndex].value && (window.location = this.options[this.selectedIndex].value);">
-                  <option value="<%= appointments_path %>">Sellers...</option>
+                  <option value="<%= appointments_path %>">Salesmen...</option>
                   <% @sellers.each do |user| %>
                   <option value="<%= sellerschedule_path(user) %>" <% if @seller.id == user.id %>selected="true"<% end %>><%= user.full_name %></option>
                   <% end %>
@@ -117,27 +117,27 @@
                 </tr>
 
                 <tr>
-                  <td class="appointments-table-time">10am-12am</td>
+                  <td class="appointments-table-time">10am-11am</td>
                   <%= render 'events', appointments: @appointments, days_from_this_week: @days_from_this_week, hour: 10  %>
                 </tr>
 
                 <tr>
-                  <td class="appointments-table-time">12pm-2pm</td>
+                  <td class="appointments-table-time">12pm-1pm</td>
                   <%= render 'events', appointments: @appointments, days_from_this_week: @days_from_this_week, hour: 12 %>
                 </tr>
 
                 <tr>
-                  <td class="appointments-table-time">2pm-4pm</td>
+                  <td class="appointments-table-time">2pm-3pm</td>
                   <%= render 'events', appointments: @appointments, days_from_this_week: @days_from_this_week, hour: 14 %>
                 </tr>
 
                 <tr>
-                  <td class="appointments-table-time">4pm-6pm</td>
+                  <td class="appointments-table-time">4pm-5pm</td>
                   <%= render 'events', appointments: @appointments, days_from_this_week: @days_from_this_week, hour: 16 %>
                 </tr>
 
                 <tr>
-                  <td class="appointments-table-time">6pm-8pm</td>
+                  <td class="appointments-table-time">6pm-7pm</td>
                   <%= render 'events', appointments: @appointments, days_from_this_week: @days_from_this_week, hour: 18 %>
                 </tr>
 
