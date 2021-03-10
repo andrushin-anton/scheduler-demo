@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170415184407) do
+ActiveRecord::Schema.define(version: 20181226135004) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -71,6 +71,7 @@ ActiveRecord::Schema.define(version: 20170415184407) do
     t.string   "sold_window_color_outside"
     t.string   "sold_window_color_inside"
     t.string   "sold_by"
+    t.string   "payment_type"
     t.index ["followup_time"], name: "index_appointments_on_followup_time", using: :btree
     t.index ["installer_id"], name: "index_appointments_on_installer_id", using: :btree
     t.index ["schedule_time"], name: "index_appointments_on_schedule_time", using: :btree
