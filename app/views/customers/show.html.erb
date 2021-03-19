@@ -11,13 +11,15 @@
             <li>
               <div class="block">
                 <div class="tags">
-                  <a href="" class="tag">
-                    <span><%= app.province %></span>
+                  <a href="<% if can? :edit, Appointment %><%= edit_appointment_path(app) %><% else %><%= appointment_path(app) %><% end %>" class="tag">
+                      <span><%= app.province %></span>
                   </a>
                 </div>
                 <div class="block_content">
                   <h2 class="title">
-                    <a><%= app.address %>, <%= app.city %>, <%= app.province %></a>
+                  <a href="<% if can? :edit, Appointment %><%= edit_appointment_path(app) %><% else %><%= appointment_path(app) %><% end %>">  
+                    <%= app.address %>, <%= app.city %>, <%= app.province %>
+                  </a>
                   </h2>
                   <div class="byline">
                     <span><%= app.schedule_time.to_formatted_s(:short) %></span>

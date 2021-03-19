@@ -2,7 +2,7 @@
 <select id="schedule_time_select" class="form-control" onchange="this.options[this.selectedIndex].value && (select_appointment_time_frame(this.options[this.selectedIndex].value));">
     <% @bookings.each do |item| %>
     <% if item[:schedule_time].strftime("%H").to_i == 9 %>
-    <option value="09:00:00" <% if @bookings.first === item %>selected="true"<% end %>>9am-10am (<%= item[:available]%> bookings available)</option>
+    <option value="09:00:00" <% if @bookings.first === item %>selected="true"<% end %>>8am-10am (<%= item[:available]%> bookings available)</option>
     <% end %>
     <% if item[:schedule_time].strftime("%H").to_i == 10 %>
     <option value="10:00:00" <% if @bookings.first === item %>selected="true"<% end %>>10am-12am (<%= item[:available]%> bookings available)</option>
@@ -17,11 +17,13 @@
     <option value="16:00:00" <% if @bookings.first === item %>selected="true"<% end %>>4pm-6pm (<%= item[:available]%> bookings available)</option>
     <% end %>
     <% if item[:schedule_time].strftime("%H").to_i == 18 %>
-    <option value="18:00:00" <% if @bookings.first === item %>selected="true"<% end %>>6pm-8pm (<%= item[:available]%> bookings available)</option>
+    <option value="18:00:00" <% if @bookings.first === item %>selected="true"<% end %>>6pm-9pm (<%= item[:available]%> bookings available)</option>
     <% end %>
+    <!--
     <% if item[:schedule_time].strftime("%H").to_i == 20 %>
     <option value="20:00:00" <% if @bookings.first === item %>selected="true"<% end %>>8pm-9pm (<%= item[:available]%> bookings available)</option>
     <% end %>
+    -->
     <% end %>
 </select>
 <script>

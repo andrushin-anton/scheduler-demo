@@ -31,7 +31,7 @@
             <select id="schedule_time_select" class="form-control" onchange="this.options[this.selectedIndex].value && (select_appointment_time_frame(this.options[this.selectedIndex].value));">
               <% @bookings.each do |item| %>
               <% if item[:schedule_time].strftime("%H").to_i == 9 %>
-              <option value="09:00:00" <% if appointment.schedule_time.strftime("%H").to_i == 9 %>selected="true"<% end %>>9am-10am (<%= item[:available]%> bookings available)</option>
+              <option value="09:00:00" <% if appointment.schedule_time.strftime("%H").to_i == 9 %>selected="true"<% end %>>8am-10am (<%= item[:available]%> bookings available)</option>
               <% end %>
               <% if item[:schedule_time].strftime("%H").to_i == 10 %>
               <option value="10:00:00" <% if appointment.schedule_time.strftime("%H").to_i == 10 %>selected="true"<% end %>>10am-12am (<%= item[:available]%> bookings available)</option>
@@ -46,11 +46,13 @@
               <option value="16:00:00" <% if appointment.schedule_time.strftime("%H").to_i == 16 %>selected="true"<% end %>>4pm-6pm (<%= item[:available]%> bookings available)</option>
               <% end %>
               <% if item[:schedule_time].strftime("%H").to_i == 18 %>
-              <option value="18:00:00" <% if appointment.schedule_time.strftime("%H").to_i == 18 %>selected="true"<% end %>>6pm-8pm (<%= item[:available]%> bookings available)</option>
+              <option value="18:00:00" <% if appointment.schedule_time.strftime("%H").to_i == 18 %>selected="true"<% end %>>6pm-9pm (<%= item[:available]%> bookings available)</option>
               <% end %>
+              <!--
               <% if item[:schedule_time].strftime("%H").to_i == 20 %>
               <option value="20:00:00" <% if appointment.schedule_time.strftime("%H").to_i == 20 %>selected="true"<% end %>>8pm-9pm (<%= item[:available]%> bookings available)</option>
               <% end %>
+              -->
               <% end %>
             </select>
           </div>
@@ -194,7 +196,7 @@
         <label class="control-label col-md-3 col-sm-3 col-xs-12"></label>
         <div id="gmap" class="col-md-9 col-sm-9 col-xs-12">
             <% if edit_mode == true && appointment.postal_code != '' %>
-            <iframe src="https://maps.google.com/maps?q=<%=u appointment.postal_code %>&output=embed" style="border:none;width:100%;height:250px;" class="form-control"></iframe>
+            <iframe src="https://maps.google.com/maps?q=<%=u appointment.postal_code + ' ' + appointment.city + ' ' + appointment.address  %>&output=embed" style="border:none;width:100%;height:250px;" class="form-control"></iframe>
             <% end %>
         </div>
       </div>
@@ -298,7 +300,7 @@
       <div class="form-group">
         <label class="control-label col-md-3 col-sm-3 col-xs-12">FollowUp Time Frame</label>
         <div class="col-md-9 col-sm-9 col-xs-12">
-          <%= f.select :followup_timeframe, options_for_select({ '9am-10am' => '9am-10am', '10am-12am' => '10am-12am', '12pm-2pm' => '12pm-2pm', '2pm-4pm' => '2pm-4pm', '4pm-6pm' => '4pm-6pm', '6pm-8pm' => '6pm-8pm', '8pm-9pm' => '8pm-9pm' }.values, appointment.followup_timeframe), {}, { class: 'form-control' } %>
+          <%= f.select :followup_timeframe, options_for_select({ '8am-10am' => '8am-10am', '10am-12am' => '10am-12am', '12pm-2pm' => '12pm-2pm', '2pm-4pm' => '2pm-4pm', '4pm-6pm' => '4pm-6pm', '6pm-9pm' => '6pm-9pm' }.values, appointment.followup_timeframe), {}, { class: 'form-control' } %>
         </div>
       </div>
       <div class="form-group">
@@ -529,9 +531,11 @@
 
       $(document).ready(function() {
         $('.postal').focusout(function(){
+          var address = $('.address').val();
+          var city = $('.city').val();
           var postal = $('.postal').val();
           if (postal != '') {
-            $('#gmap').html('<iframe src="https://maps.google.com/maps?q='+encodeURIComponent(postal)+'&output=embed" style="border:none;width:100%;height:250px;" class="form-control"></iframe>');
+            $('#gmap').html('<iframe src="https://maps.google.com/maps?q='+encodeURIComponent(postal + ' ' + city + ' ' + address)+'&output=embed" style="border:none;width:100%;height:250px;" class="form-control"></iframe>');
           }
         });
       });
