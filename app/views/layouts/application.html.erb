@@ -59,6 +59,9 @@
                     <% if can? :administrators, User %>
                       <li class="<%= 'current-page' if params[:controller] == 'administrators' %>"><a href="<%= administrators_path%>">Administrators</a></li>
                     <% end %>
+                    <% if can? :index, Statistics %>
+                      <li class="<%= 'current-page' if params[:controller] == 'statistics' %>"><a href="<%= statistics_path%>">Statistics</a></li>
+                    <% end %>
                     <% if can? :index, Logs %>
                       <li class="<%= 'current-page' if params[:controller] == 'logs' %>"><a href="<%= logs_path%>">Logs</a></li>
                     <% end %>
@@ -126,6 +129,9 @@
                     <% end %>
                     <% if can? :administrators, User %>
                         <li><a href="<%= administrators_path%>">Administrators</a></li>
+                    <% end %>
+                    <% if can? :index, Statistics %>
+                        <li><a href="<%= statistics_path%>">Statistics</a></li>
                     <% end %>
                     <% if can? :index, Logs %>
                         <li><a href="<%= logs_path%>">Logs</a></li>

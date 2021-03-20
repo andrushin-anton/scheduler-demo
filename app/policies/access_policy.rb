@@ -51,6 +51,7 @@ class AccessPolicy
         :telemarketers, :telemarketers_new, :telemarketers_create
       ], User
       can [:index, :logs], Logs
+      can [:index, :statistics], Statistics
       
     end
 
@@ -67,6 +68,7 @@ class AccessPolicy
         :telemarketers, :telemarketers_new, :telemarketers_create
       ], User
       can [:index, :logs], Logs
+      can [:index, :statistics], Statistics
       
     end
 

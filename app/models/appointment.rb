@@ -15,6 +15,10 @@ class Appointment < ApplicationRecord
 
     attr_accessor :new_customer_first_name, :new_customer_last_name, :new_customer_phone, :new_customer_home_phone, :new_customer_email
 
+    def self.get_statuses()
+        self.statuses
+    end
+
     def is_new_customer?        
         if self.new_record? && self.is_new_customer == 1
             return true

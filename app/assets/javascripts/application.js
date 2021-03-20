@@ -17,6 +17,8 @@
 //= require_tree .
 //= require bootstrap-datepicker
 //= require s3_direct_upload
+//= require chartkick
+//= require Chart.bundle
 
 $(document).on('turbolinks:load', function() {
     process_attachments();

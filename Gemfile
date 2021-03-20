@@ -50,6 +50,9 @@ gem 'bcrypt', '~> 3.1.7'
 
 gem 'bootstrap-datepicker-rails'
 
+gem 'groupdate'
+gem 'chartkick', '~> 3.4.0'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 

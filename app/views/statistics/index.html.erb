@@ -1,0 +1,30 @@
+
+<div class="page-title">
+  <div class="title_left">
+    <h3>Statistics <small></small></h3>
+  </div>
+
+  <div class="title_right">
+    <div class="col-md-5 col-sm-5 col-xs-12 form-group pull-right top_search">
+      <%= form_tag logs_path, :method => 'get' do %>
+      <div class="input-group">
+          <input type="text" name="search" value="<%= params[:search] %>" class="form-control" placeholder="Search for...">
+          <span class="input-group-btn">
+          <%= submit_tag "Go!", :name => nil, :class => "btn btn-default search" %>
+          </span>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="col-md-6 col-sm-6 col-xs-12" style="width:100%">
+  <div class="x_panel">
+    <div class="x_content">
+    <%= line_chart @statuses.map { |status|
+        {name: status[0], data: Statistics.where('status = ? AND created_at >= ?', status[0], 1.year.ago).group_by_month(:created_at).count}
+    } %>
+    </div>
+  </div>
+</div>
+

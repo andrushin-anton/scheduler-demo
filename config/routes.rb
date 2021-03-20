@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   get 'logout', to: 'sessions#destroy', as: 'logout'
   get 'users/password/:id', to: 'users#password', as: 'password'
   get 'logs', to: 'logs#index'
+  get 'statistics', to: 'statistics#index'
   get 'appointments/new/:unixtime', to: 'appointments#new'
   get 'appointments/date/:date', to: 'appointments#index'
   get 'customers/find/:phone', to: 'customers#find_by_phone'
