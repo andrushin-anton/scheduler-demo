@@ -318,35 +318,35 @@
                           <div class="form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Amount of total order</label>
                             <div class="col-md-9 col-sm-9 col-xs-12">
-                              <%= f.number_field :sold_amount, :class => 'form-control money', :step => "0.01", required: 'true' %>
+                              <%= f.number_field :sold_amount, :class => 'form-control money subtotal', :step => "0.01", required: 'true' %>
                             </div>
                           </div>
 
                           <div class="form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Down payment</label>
                             <div class="col-md-9 col-sm-9 col-xs-12">
-                              <%= f.number_field :sold_energy_charge, :class => 'form-control money', :step => "0.01" %>
+                              <%= f.number_field :sold_energy_charge, :class => 'form-control money down-payment', :step => "0.01" %>
                             </div>
                           </div>
 
                           <div class="form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12">GST</label>
                             <div class="col-md-9 col-sm-9 col-xs-12">
-                              <%= f.number_field :sold_gst, :class => 'form-control money', :step => "0.01" %>
+                              <%= f.number_field :sold_gst, :class => 'form-control money gst', :step => "0.01", disabled: true %>
                             </div>
                           </div>
 
                           <div class="form-group">
                             <label class="control-label col-md-3 col-sm-3 col-xs-12">Total</label>
                             <div class="col-md-9 col-sm-9 col-xs-12">
-                              <%= f.number_field :sold_total, :class => 'form-control money', :step => "0.01", required: 'true' %>
+                              <%= f.number_field :sold_total, :class => 'form-control money total', :step => "0.01", required: 'true', disabled: true %>
                             </div>
                           </div>
 
                           <div class="form-group">
-                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Amount due upon installation</label>
+                            <label class="control-label col-md-3 col-sm-3 col-xs-12">Grand total</label>
                             <div class="col-md-9 col-sm-9 col-xs-12">
-                              <%= f.number_field :sold_amount_of_total, :class => 'form-control money', :step => "0.01" %>
+                              <%= f.number_field :sold_amount_of_total, :class => 'form-control money grand-total', :step => "0.01" %>
                             </div>
                           </div>
 
@@ -480,5 +480,35 @@
                 </div>
               </div>
               <% end %>
+
+              <script>
+              function roundPrecised(number, precision) {
+                var power = Math.pow(10, precision);
+                return Math.round(number * power) / power;
+              }
+
+              $(document).ready(function() {
+                $('.subtotal').focusout(function(){
+                  var subtotal = parseFloat($('.subtotal').val());
+
+                  if (subtotal) {
+                    var gst = roundPrecised(subtotal * 0.05, 2);
+                    var total = subtotal + gst;
+                    $('.gst').val(gst);
+                    $('.total').val(total);
+                  }
+                });
+
+                $('.down-payment').focusout(function(){
+                  var total = parseFloat($('.total').val());
+                  var downPayment = parseFloat($('.down-payment').val());
+
+                  if (total && downPayment) {
+                    var grandTotal = total - downPayment;
+                    $('.grand-total').val(grandTotal);
+                  }
+                });
+              });
+            </script>
 
               
