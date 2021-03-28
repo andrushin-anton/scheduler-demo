@@ -10,7 +10,7 @@ class Appointment < ApplicationRecord
     belongs_to :customer
     has_many :attachments
 
-    enum statuses: { Assigned: :Assigned, Lead: :Lead, Reschedule: :Reschedule, UpSell: :UpSell, Referral: :Referral, Cancelled: :Cancelled, Sold: :Sold, FollowUp: :FollowUp, Telemarketing: :Telemarketing, Completed: :Completed }
+    enum statuses: { Assigned: :Assigned, Lead: :Lead, Reschedule: :Reschedule, UpSell: :UpSell, Referral: :Referral, FollowUp: :FollowUp, Telemarketing: :Telemarketing, Cancelled: :Cancelled, Sold: :Sold, LeadInProgress: :LeadInProgress, OrderInprogress: :OrderInprogress, OrderInWarehouse: :OrderInWarehouse, Completed: :Completed }
     enum types: { Confirmed: :Confirmed, Unconfirmed: :Unconfirmed }
 
     attr_accessor :new_customer_first_name, :new_customer_last_name, :new_customer_phone, :new_customer_home_phone, :new_customer_email
@@ -253,6 +253,12 @@ class Appointment < ApplicationRecord
                 return self.installer_id == nil ? 'green' : 'green'
             when :FollowUp
                 return 'purple'
+            when :LeadInProgress
+                return '#ffbf00'
+            when :OrderInprogress
+                return '#b94646'
+            when :OrderInWarehouse
+                return '#800000'
             else
                 return '#FFF'
             end
