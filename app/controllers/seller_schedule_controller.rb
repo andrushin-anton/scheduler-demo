@@ -41,6 +41,9 @@ class SellerScheduleController < ApplicationController
 
       end_time = params[:end_time] + ' 23:59:59'
       SellerSchedule.remove_existing(@seller.id, params[:start_time], end_time)
+
+      bookings_available_last_day = Time.parse((Date.today - 2.weeks).to_s)
+      SellerSchedule.maintaince(bookings_available_last_day)
       
       if params[:schedule_time]
         params[:schedule_time].each do |day|

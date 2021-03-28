@@ -16,6 +16,10 @@ class SellerSchedule < ApplicationRecord
         self.where('schedule_time >= ? AND schedule_time <= ? AND seller_id = ?', start_time, end_time, seller_id).destroy_all
     end
 
+    def self.maintaince(end_time)
+        self.where('schedule_time <= ?', end_time).destroy_all
+    end
+
     def self.bookings_available(start_time, end_time, appointment = nil)
         # get all available schedules between given dates
         schedules = self.where('schedule_time >= ? AND schedule_time <= ?', start_time, end_time).order('id ASC').all

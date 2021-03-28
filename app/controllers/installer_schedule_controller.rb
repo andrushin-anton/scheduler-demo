@@ -41,6 +41,9 @@ class InstallerScheduleController < ApplicationController
 
       end_time = params[:end_time] + ' 23:59:59'
       InstallerSchedule.remove_existing(@installer.id, params[:start_time], end_time)
+
+      bookings_available_last_day = Time.parse((Date.today - 2.weeks).to_s)
+      InstallerSchedule.maintaince(bookings_available_last_day)
       
       if params[:schedule_time]
         params[:schedule_time].each do |day|
