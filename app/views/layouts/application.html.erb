@@ -41,6 +41,9 @@
                     <% if can? :index, Appointment %>
                       <li class="<%= 'current-page' if params[:controller] == 'appointments' %>"><a href="<%= appointments_path %>">Appointments</a></li>
                     <% end %>
+                    <% if can? :index, Orders %>
+                      <li class="<%= 'current-page' if params[:controller] == 'orders' %>"><a href="<%= orders_path %>">Orders</a></li>
+                    <% end %>
                     <% if can? :index, Customer %>
                       <li class="<%= 'current-page' if params[:controller] == 'customers' %>"><a href="<%= customers_path %>">Customers</a></li>
                     <% end %>
@@ -111,6 +114,9 @@
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
                     <% if can? :index, Appointment %>
                         <li><a href="<%= appointments_path %>">Appointments</a></li>
+                    <% end %>
+                    <% if can? :index, Orders %>
+                        <li><a href="<%= orders_path %>">Orders</a></li>
                     <% end %>
                     <% if can? :index, Customer %>
                         <li><a href="<%= customers_path %>">Customers</a></li>

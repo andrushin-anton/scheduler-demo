@@ -52,6 +52,7 @@ class AccessPolicy
       ], User
       can [:index, :logs], Logs
       can [:index, :statistics], Statistics
+      can [:index, :orders], Orders
       
     end
 
@@ -69,6 +70,7 @@ class AccessPolicy
       ], User
       can [:index, :logs], Logs
       can [:index, :statistics], Statistics
+      can [:index, :orders], Orders
       
     end
 
