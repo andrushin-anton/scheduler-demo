@@ -12,7 +12,7 @@ class Customer < ApplicationRecord
 
     def self.search(search, current_page)
         if search
-            self.where('first_name LIKE ? OR last_name LIKE ?', "%#{search}%", "%#{search}%").order('id DESC').page(current_page)
+            self.where('first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR phone LIKE ?', "%#{search}%", "%#{search}%", "%#{search}%", "%#{search}%").order('id DESC').page(current_page)
         else
             self.where(:status => 'ACTIVE').order('id DESC').page(current_page) 
         end
