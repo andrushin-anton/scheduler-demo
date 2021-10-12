@@ -117,7 +117,8 @@ GEM
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     pg (1.2.3)
-    puma (3.12.6)
+    puma (5.5.1)
+      nio4r (~> 2.0)
     racc (1.5.2)
     rack (2.2.3)
     rack-test (0.6.3)
@@ -218,7 +219,7 @@ DEPENDENCIES
   kaminari
   listen (~> 3.0.5)
   pg
-  puma (~> 3.0)
+  puma (~> 5.5)
   rails (~> 5.0.2)
   rails-observers!
   rails_12factor
